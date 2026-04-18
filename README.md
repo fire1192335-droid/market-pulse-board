@@ -7,6 +7,7 @@
 - Frontend: Vite + React + TypeScript + React Router + Tailwind CSS
 - Chart: lightweight-charts
 - Backend: Node.js + Express
+- Deployment target: Vercel static frontend + serverless API
 - Data strategy: backend proxy + provider abstraction + demo fallback
 
 ## 功能概要
@@ -23,21 +24,21 @@
 
 ```text
 /
-  src/
-    app/
-    pages/
-    components/
-    config/
-    hooks/
-    services/
-    styles/
-    types/
+  api/
   server/
     providers/
     routes/
     utils/
   shared/
-  public/
+  src/
+    app/
+    components/
+    config/
+    hooks/
+    pages/
+    services/
+    styles/
+    types/
 ```
 
 ## 安裝方式
@@ -62,11 +63,40 @@ npm run build
 npm start
 ```
 
-`npm start` 會用 Express 直接提供 `dist/` 內容與 `/api/*` 路由。
+`npm start` 會在本機用 Express 提供 `dist/` 與 `/api/*` 路由。
 
-## 環境變數
+## Vercel 部署架構
 
-請先建立 `.env`，內容可參考 `.env.example`：
+這個專案已整理成適合 Vercel 的形態：
+
+- 前端：Vite build 輸出到 `dist/`
+- API：`api/[...route].ts` 作為 Vercel serverless function 入口
+- 共用商業邏輯：放在 `server/app.ts`、`server/routes/*`、`server/providers/*`
+- SPA 路由：由 `vercel.json` 把 `/stock/:symbol` rewrite 到 `/index.html`
+
+也就是說，在 Vercel 上不需要跑一整台長駐 Node server：
+
+- 靜態頁面由 `dist/` 直接提供
+- `/api/*` 由 Vercel Functions 執行
+
+## Vercel 部署步驟
+
+1. 把專案推到 GitHub
+2. 到 Vercel 匯入該 repo
+3. Framework Preset 選 `Vite`
+4. Build Command 使用：
+
+```bash
+npm run build
+```
+
+5. Output Directory 使用：
+
+```bash
+dist
+```
+
+6. 加入環境變數：
 
 ```env
 PORT=8787
@@ -76,6 +106,8 @@ US_API_KEY=
 TW_API_KEY=
 CACHE_TTL_SECONDS=600
 ```
+
+在 Vercel 上，`PORT` 不一定會真的被平台使用，但保留它可讓本機與其他平台一致。
 
 ## Provider 策略
 
@@ -117,8 +149,8 @@ TW_MARKET_PROVIDER=demo
 ## API 路由
 
 - `GET /api/market/summary`
-- `GET /api/market/us/index/:id`
-- `GET /api/market/tw/index/:id`
+- `GET /api/us/index/:id`
+- `GET /api/tw/index/:id`
 - `GET /api/tw/stock/search?q=`
 - `GET /api/tw/stock/:symbol`
 - `GET /api/tw/stock/:symbol/history?range=1M`
@@ -146,13 +178,6 @@ TW_MARKET_PROVIDER=demo
 1. 新增正式 provider，例如券商授權 feed 或付費市場資料
 2. 在 `server/providers/index.ts` 依環境變數切換
 3. 保持前端 API 與 UI 不變
-
-## 我這次的合理假設
-
-- 預設先做「公開延遲可用版」，不把官方授權即時資料當成前提
-- 台股搜尋清單優先使用官方公開來源
-- 沒有 API key 時仍要可啟動，因此內建 demo fallback
-- SOX 仍保留在設定檔，可之後依 provider 支援狀況替換
 
 ## 驗證指令
 
