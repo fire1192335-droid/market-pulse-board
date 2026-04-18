@@ -1,9 +1,9 @@
-import { TW_INDEX_CONFIG, US_INDEX_CONFIG } from "../../shared/markets";
-import type { ChartRange, MarketSummaryData, StockDetailData, StockSearchResult } from "../../shared/types";
-import { maxUpdatedAt } from "../utils/http";
-import { createDemoHistory, createDemoMarketQuote, createDemoStockQuote } from "./demoProvider";
-import { createTwProvider } from "./twProvider";
-import { createUsProvider } from "./usProvider";
+import { TW_INDEX_CONFIG, US_INDEX_CONFIG } from "../../shared/markets.js";
+import type { ChartRange, MarketSummaryData, StockDetailData, StockSearchResult } from "../../shared/types.js";
+import { maxUpdatedAt } from "../utils/http.js";
+import { createDemoHistory, createDemoMarketQuote, createDemoStockQuote } from "./demoProvider.js";
+import { createTwProvider } from "./twProvider.js";
+import { createUsProvider } from "./usProvider.js";
 
 function createDemoUsProvider() {
   return {

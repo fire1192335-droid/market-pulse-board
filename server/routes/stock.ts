@@ -1,8 +1,8 @@
 import { Router } from "express";
 
-import { createSuccessResponse, createErrorResponse } from "./response";
-import { createMarketService } from "../providers";
-import type { ChartRange } from "../../shared/types";
+import { createSuccessResponse, createErrorResponse } from "./response.js";
+import { createMarketService } from "../providers/index.js";
+import type { ChartRange } from "../../shared/types.js";
 
 const router = Router();
 const marketService = createMarketService();

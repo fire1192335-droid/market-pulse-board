@@ -1,8 +1,8 @@
-import { CHART_RANGES, TW_INDEX_CONFIG } from "../../shared/markets";
-import type { ChartRange, HistoricalPoint, MarketQuote, StockQuote, StockSearchResult } from "../../shared/types";
-import { createDemoHistory, createDemoMarketQuote, createDemoStockQuote } from "./demoProvider";
-import { TimedCache } from "../utils/cache";
-import { fetchJson, toDisplayStatus, toIsoFromUnix } from "../utils/http";
+import { CHART_RANGES, TW_INDEX_CONFIG } from "../../shared/markets.js";
+import type { ChartRange, HistoricalPoint, MarketQuote, StockQuote, StockSearchResult } from "../../shared/types.js";
+import { createDemoHistory, createDemoMarketQuote, createDemoStockQuote } from "./demoProvider.js";
+import { TimedCache } from "../utils/cache.js";
+import { fetchJson, toDisplayStatus, toIsoFromUnix } from "../utils/http.js";
 
 const TWSE_STOCK_LIST_URL = "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL";
 const TPEX_QUOTES_URL = "https://www.tpex.org.tw/www/zh-tw/afterTrading/dailyQuotes";

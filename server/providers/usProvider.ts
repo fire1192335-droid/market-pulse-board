@@ -1,8 +1,8 @@
-import { US_INDEX_CONFIG } from "../../shared/markets";
-import type { MarketConfigItem } from "../../shared/markets";
-import type { MarketQuote } from "../../shared/types";
-import { createDemoMarketQuote } from "./demoProvider";
-import { fetchJson, toDisplayStatus, toIsoFromUnix } from "../utils/http";
+import { US_INDEX_CONFIG } from "../../shared/markets.js";
+import type { MarketConfigItem } from "../../shared/markets.js";
+import type { MarketQuote } from "../../shared/types.js";
+import { createDemoMarketQuote } from "./demoProvider.js";
+import { fetchJson, toDisplayStatus, toIsoFromUnix } from "../utils/http.js";
 
 interface YahooMeta {
   regularMarketPrice?: number;

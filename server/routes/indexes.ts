@@ -1,7 +1,7 @@
 import { Router } from "express";
 
-import { createMarketService } from "../providers";
-import { createErrorResponse, createSuccessResponse } from "./response";
+import { createMarketService } from "../providers/index.js";
+import { createErrorResponse, createSuccessResponse } from "./response.js";
 
 const router = Router();
 const marketService = createMarketService();

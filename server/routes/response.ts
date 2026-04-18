@@ -1,4 +1,4 @@
-import type { ApiResponse, Freshness } from "../../shared/types";
+import type { ApiResponse, Freshness } from "../../shared/types.js";
 
 export function createSuccessResponse<T>(input: {
   data: T;

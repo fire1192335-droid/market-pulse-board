@@ -1,20 +1,20 @@
 import express from "express";
 
-import indexRoutes from "./routes/indexes";
-import marketRoutes from "./routes/market";
-import stockRoutes from "./routes/stock";
-import { createErrorResponse } from "./routes/response";
+import indexRoutes from "./routes/indexes.js";
+import marketRoutes from "./routes/market.js";
+import stockRoutes from "./routes/stock.js";
+import { createErrorResponse } from "./routes/response.js";
 
-export function createApp() {
+export function createApiApp() {
   const app = express();
 
   app.use(express.json());
 
-  app.use("/api", indexRoutes);
-  app.use("/api/market", marketRoutes);
-  app.use("/api", stockRoutes);
+  app.use(indexRoutes);
+  app.use("/market", marketRoutes);
+  app.use(stockRoutes);
 
-  app.use("/api", (_request, response) => {
+  app.use((_request, response) => {
     response.status(404).json(createErrorResponse("route not found"));
   });
 

@@ -1,5 +1,5 @@
-import type { ChartRange, HistoricalPoint, MarketQuote, StockQuote } from "../../shared/types";
-import { toDisplayStatus } from "../utils/http";
+import type { ChartRange, HistoricalPoint, MarketQuote, StockQuote } from "../../shared/types.js";
+import { toDisplayStatus } from "../utils/http.js";
 
 function hashSeed(input: string) {
   return input.split("").reduce((total, char) => total + char.charCodeAt(0), 0);
