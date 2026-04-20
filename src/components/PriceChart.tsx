@@ -1,6 +1,6 @@
 import {
+  CandlestickSeries,
   createChart,
-  LineSeries,
   type BusinessDay,
   type IChartApi,
   type ISeriesApi,
@@ -20,6 +20,14 @@ interface PriceChartProps {
   loading: boolean;
 }
 
+interface HoveredCandle {
+  time: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+}
+
 function crosshairTimeToString(time: MouseEventParams["time"]) {
   if (!time) {
     return "";
@@ -36,8 +44,8 @@ function crosshairTimeToString(time: MouseEventParams["time"]) {
 export function PriceChart({ points, range, onRangeChange, loading }: PriceChartProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<IChartApi | null>(null);
-  const seriesRef = useRef<ISeriesApi<"Line"> | null>(null);
-  const [hovered, setHovered] = useState<{ time: string; value: number } | null>(null);
+  const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
+  const [hovered, setHovered] = useState<HoveredCandle | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -62,29 +70,44 @@ export function PriceChart({ points, range, onRangeChange, loading }: PriceChart
       },
     });
 
-    const lineSeries = chart.addSeries(LineSeries, {
-      color: "#38bdf8",
-      lineWidth: 3,
-      crosshairMarkerVisible: true,
+    const candlestickSeries = chart.addSeries(CandlestickSeries, {
+      upColor: "#ef4444",
+      downColor: "#22c55e",
+      borderVisible: true,
+      wickUpColor: "#ef4444",
+      wickDownColor: "#22c55e",
+      borderUpColor: "#ef4444",
+      borderDownColor: "#22c55e",
       priceLineVisible: false,
     });
 
     chart.subscribeCrosshairMove((param) => {
-      const point = param.seriesData.get(lineSeries) as { value?: number } | undefined;
+      const point = param.seriesData.get(candlestickSeries) as
+        | { open?: number; high?: number; low?: number; close?: number }
+        | undefined;
 
-      if (!point?.value || !param.time) {
+      if (
+        point?.open === undefined ||
+        point.high === undefined ||
+        point.low === undefined ||
+        point.close === undefined ||
+        !param.time
+      ) {
         setHovered(null);
         return;
       }
 
       setHovered({
         time: crosshairTimeToString(param.time),
-        value: point.value,
+        open: point.open,
+        high: point.high,
+        low: point.low,
+        close: point.close,
       });
     });
 
     chartRef.current = chart;
-    seriesRef.current = lineSeries;
+    seriesRef.current = candlestickSeries;
 
     return () => {
       chart.remove();
@@ -100,7 +123,10 @@ export function PriceChart({ points, range, onRangeChange, loading }: PriceChart
 
     const data = points.map((point) => ({
       time: Math.floor(new Date(point.time).getTime() / 1000) as UTCTimestamp,
-      value: point.close ?? point.value,
+      open: point.open ?? point.close ?? point.value,
+      high: point.high ?? point.close ?? point.value,
+      low: point.low ?? point.close ?? point.value,
+      close: point.close ?? point.value,
     }));
 
     seriesRef.current.setData(data);
@@ -112,9 +138,9 @@ export function PriceChart({ points, range, onRangeChange, loading }: PriceChart
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-market-muted">Chart</p>
-          <h2 className="mt-2 text-2xl font-semibold text-white">走勢圖</h2>
+          <h2 className="mt-2 text-2xl font-semibold text-white">K 線圖</h2>
           <p className="mt-2 text-sm text-market-muted">
-            使用 lightweight-charts。若資料源不支援完整盤中資料，會自動退回日線或週線。
+            使用 lightweight-charts 顯示 K 線。若資料源不支援更細的盤中資料，會自動退回日線資料。
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -138,7 +164,11 @@ export function PriceChart({ points, range, onRangeChange, loading }: PriceChart
           <div>
             <p className="text-sm text-market-muted">十字線資訊</p>
             <p className="mt-1 text-base font-semibold text-white">
-              {hovered ? `${formatNumber(hovered.value)} · ${formatDateTime(hovered.time)}` : "移動游標查看價格"}
+              {hovered
+                ? `O ${formatNumber(hovered.open)} / H ${formatNumber(hovered.high)} / L ${formatNumber(
+                    hovered.low,
+                  )} / C ${formatNumber(hovered.close)} · ${formatDateTime(hovered.time)}`
+                : "移動游標查看 K 線資訊"}
             </p>
           </div>
           {loading && <p className="text-sm text-market-muted">圖表更新中...</p>}
