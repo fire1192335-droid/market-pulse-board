@@ -23,7 +23,7 @@ router.get("/summary", async (request, response) => {
     response.json(
       createSuccessResponse({
         data,
-        source: "Yahoo public market data + official TW stock catalog",
+        source: "Yahoo public US market data + TWSE official Taiwan daily data (preferred)",
         freshness,
         updatedAt: marketService.getLatestUpdatedAt(combined),
       }),
